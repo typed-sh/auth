@@ -1,0 +1,29 @@
+{
+  "name": "@auth/server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "NODE_OPTIONS='--import tsx' ava"
+  },
+  "keywords": [],
+  "author": "HoJeong Go <hojeong@typed.sh>",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^20.10.5",
+    "@typescript-eslint/eslint-plugin": ">=6.0.0",
+    "@typescript-eslint/parser": ">=6.0.0",
+    "ava": "^6.0.1",
+    "eslint": ">=8.0.0",
+    "eslint-config-xo": "^0.43.1",
+    "eslint-config-xo-typescript": "^1.0.1",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "argon2": "^0.31.2",
+    "fastify": "^4.25.1",
+    "fastify-plugin": "^4.5.1"
+  }
+}
