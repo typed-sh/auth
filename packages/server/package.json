@@ -11,6 +11,7 @@
   "author": "HoJeong Go <hojeong@typed.sh>",
   "license": "ISC",
   "devDependencies": {
+    "@types/better-sqlite3": "^7.6.8",
     "@types/node": "^20.10.5",
     "@typescript-eslint/eslint-plugin": ">=6.0.0",
     "@typescript-eslint/parser": ">=6.0.0",
@@ -23,7 +24,9 @@
   },
   "dependencies": {
     "argon2": "^0.31.2",
+    "better-sqlite3": "^9.2.2",
     "fastify": "^4.25.1",
-    "fastify-plugin": "^4.5.1"
+    "fastify-plugin": "^4.5.1",
+    "paseto": "^3.1.4"
   }
 }
