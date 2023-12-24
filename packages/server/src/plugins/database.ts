@@ -41,6 +41,11 @@ const plugin: FastifyPluginAsync = async server => {
 	};
 
 	server.decorate(reference, context);
+	server.addHook('onClose', () => {
+		driver.close();
+
+		server.log.info({type: 'plugin', scope: 'database'}, 'closed database');
+	});
 };
 
 export const databasePlugin = fastifyPlugin(plugin);
