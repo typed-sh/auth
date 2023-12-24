@@ -4,6 +4,10 @@ import {createHash} from '../../modules/password';
 import {isPassword} from '../../modules/models/users';
 
 export const onsiteUserRouter: FastifyPluginAsyncTypebox = async server => {
+	if (process.env.__AUTH_DISABLE_SIGNUP) {
+		return;
+	}
+
 	server.route({
 		url: '/',
 		method: 'post',
