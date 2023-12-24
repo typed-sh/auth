@@ -1,0 +1,7 @@
+{
+	"pnpm": {
+		"patchedDependencies": {
+			"@types/better-sqlite3@7.6.8": "patches/@types__better-sqlite3@7.6.8.patch"
+		}
+	}
+}

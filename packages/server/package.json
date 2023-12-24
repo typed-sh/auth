@@ -5,6 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "start": "NODE_OPTIONS='--import tsx' node ./src/entrypoints/dev.ts",
     "test": "NODE_OPTIONS='--import tsx' ava"
   },
   "keywords": [],

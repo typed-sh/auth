@@ -22,6 +22,10 @@ export const getAvailableMigrations = async (): Promise<Migration[]> => {
 };
 
 export const getRequiredMigrations = async (currentRevision: number, migrations: Migration[]) => {
+	if (!currentRevision) {
+		return migrations;
+	}
+
 	const current = migrations.findIndex(migration => migration.revision === currentRevision);
 
 	if (current < 0) {
@@ -30,7 +34,7 @@ export const getRequiredMigrations = async (currentRevision: number, migrations:
 		return [];
 	}
 
-	return migrations.slice(current);
+	return migrations.slice(current + 1);
 };
 
 export const migrate = async (db: Database, migration: Migration) => {

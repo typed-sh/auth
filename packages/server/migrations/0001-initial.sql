@@ -1,32 +1,47 @@
-create table "migrations" (
-  integer rev primary key
+create table "meta" (
+  key text,
+  value text,
+  unique(key)
 );
 
 create table "users" (
-  integer id primary key,
-  text email,
-  text username,
-  text password,
-  blob mfa,
-  numeric created_at,
-  numeric updated_at
+  id integer primary key,
+  email text,
+  username text,
+  password text,
+  mfa blob,
+  created_at numeric,
+  updated_at numeric
 );
 
 create table "applications" (
-  integer id primary key,
-  text name,
-  text description,
-  text website,
-  text privacy_policy,
-  blob platform_key,
-  numeric created_at,
-  numeric updated_at
+  id integer primary key,
+  name text,
+  description text,
+  website text,
+  privacy_policy text,
+  created_at numeric,
+  updated_at numeric
+);
+
+create table "user_integrations" (
+  id integer primary key,
+  user integer,
+  application integer,
+  private_key blob,
+  created_at numeric,
+  updated_at numeric,
+  foreign key(user) references users(id),
+  foreign key(application) references applications(id)
 );
 
 create table "devices" (
-  integer id primary key,
-  integer user foreign key references users(id),
-  text name,
-  text agent,
-  numeric last_seen
+  id integer primary key,
+  user_integration integer,
+  name text,
+  agent text,
+  last_seen numeric,
+  foreign key(user_integration) references user_integrations(id)
 );
+
+insert into "meta" (key, value) values ('migration_revision', '1');
