@@ -27,9 +27,11 @@ const initMigrations = async (server: Server) => {
 
 	const migrations = await getRequiredMigrations(currentRevision, await getAvailableMigrations());
 
-	server.log.info({type: 'init', scope: 'migrations', currentRevision, finalRevision: migrations.slice(-1)[0].revision}, 'running migrations');
+	if (migrations.length) {
+		server.log.info({type: 'init', scope: 'migrations', currentRevision, finalRevision: migrations[migrations.length - 1].revision}, 'running migrations');
 
-	await migrateSequentially(db.driver, migrations);
+		await migrateSequentially(db.driver, migrations);
+	}
 
 	server.log.info({type: 'init', scope: 'migrations'}, 'done migrations');
 };
