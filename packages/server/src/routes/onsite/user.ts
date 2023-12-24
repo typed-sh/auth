@@ -29,7 +29,7 @@ export const onsiteUserRouter: FastifyPluginAsyncTypebox = async server => {
 			const now = Date.now();
 
 			const tx = server.db.driver.transaction(() => {
-				server.db.models.users.createUser().run(email, username, hash, Buffer.from([0]), now, now);
+				server.db.models.users.createUser().run(email, username, hash, null, now, now);
 			});
 
 			tx();
