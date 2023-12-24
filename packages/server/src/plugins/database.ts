@@ -1,9 +1,9 @@
 import {type FastifyPluginAsync} from 'fastify';
 import fastifyPlugin from 'fastify-plugin';
+import {writeFile} from 'fs/promises';
 import path from 'path';
 import {createDatabaseDriver} from '../modules/database/driver';
-import {prepareModel} from '../modules/database/models';
-import {writeFile} from 'fs/promises';
+import {prepareModel} from '../modules/models';
 
 export type DatabasePluginContext = {
 	filepath: string;

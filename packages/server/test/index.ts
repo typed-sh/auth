@@ -8,7 +8,7 @@ test('post: /api/onsite/user', async t => {
 		method: 'post',
 		body: {
 			email: 'user@domain.tld',
-			password: 'password',
+			password: 'thisissamplepassword!',
 			username: 'user',
 		},
 	});

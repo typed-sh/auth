@@ -1,6 +1,7 @@
 import {Type, type FastifyPluginAsyncTypebox} from '@fastify/type-provider-typebox';
-import {createHash} from '../../modules/password';
 import {HttpErrorBadRequest} from '../../modules/errors';
+import {createHash} from '../../modules/password';
+import {isPassword} from '../../modules/models/users';
 
 export const onsiteUserRouter: FastifyPluginAsyncTypebox = async server => {
 	server.route({
@@ -15,6 +16,11 @@ export const onsiteUserRouter: FastifyPluginAsyncTypebox = async server => {
 		},
 		async handler(request, reply) {
 			const {email, username, password} = request.body;
+
+			if (!isPassword(password)) {
+				throw new HttpErrorBadRequest('invalid_password_components');
+			}
+
 			const hash = await createHash(password);
 			const now = Date.now();
 
@@ -27,7 +33,7 @@ export const onsiteUserRouter: FastifyPluginAsyncTypebox = async server => {
 			return '';
 		},
 		async errorHandler(error, request, reply) {
-			if (error.message.includes('UNIQUE')) {
+			if (error.message.includes('UNIQUE')) { // Error: sqlite unique constraint
 				throw new HttpErrorBadRequest('unique_constraint_failed');
 			}
 
