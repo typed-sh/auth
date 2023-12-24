@@ -1,13 +1,28 @@
+import {TypeBoxValidatorCompiler} from '@fastify/type-provider-typebox';
 import fastify from 'fastify';
 import {init} from './modules/init';
 import {databasePlugin} from './plugins/database';
+import {router} from './routes';
 
 export const createServer = async () => {
-	const server = fastify();
+	const server = fastify({
+		logger: {
+			transport: {
+				target: 'pino-pretty',
+				options: {
+					translateTime: 'HH:MM:ss Z',
+					ignore: 'pid,hostname',
+				},
+			},
+		},
+	})
+		.setValidatorCompiler(TypeBoxValidatorCompiler);
 
 	await server.register(databasePlugin);
 
 	await init(server);
+
+	await server.register(router, {prefix: '/api'});
 
 	return server;
 };

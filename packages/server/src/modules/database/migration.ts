@@ -29,8 +29,6 @@ export const getRequiredMigrations = async (currentRevision: number, migrations:
 	const current = migrations.findIndex(migration => migration.revision === currentRevision);
 
 	if (current < 0) {
-		console.error('migration: cannot find current revision of migration resources');
-
 		return [];
 	}
 
@@ -38,8 +36,6 @@ export const getRequiredMigrations = async (currentRevision: number, migrations:
 };
 
 export const migrate = async (db: Database, migration: Migration) => {
-	console.log('migration: running migration', migration.path);
-
 	db.exec(await readFile(migration.path, 'utf8'));
 };
 

@@ -6,7 +6,7 @@ export type MetaTable = {
 };
 
 export const prepareMetaModel = (db: Database) => {
-	const getMigrationRevision = () => db.prepare<[string], Pick<MetaTable, 'value'>>('select value from "meta" where key = ?').get('migration_revision')?.value;
+	const getMigrationRevision = () => db.prepare<[MetaTable['value']], Pick<MetaTable, 'value'>>('select value from "meta" where key = ?').get('migration_revision')?.value;
 
 	return {
 		getMigrationRevision,

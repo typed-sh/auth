@@ -10,8 +10,9 @@ create table "users" (
   username text,
   password text,
   mfa blob,
-  created_at numeric,
-  updated_at numeric
+  created_at integer,
+  updated_at integer,
+  unique(email)
 );
 
 create table "applications" (
@@ -20,8 +21,8 @@ create table "applications" (
   description text,
   website text,
   privacy_policy text,
-  created_at numeric,
-  updated_at numeric
+  created_at integer,
+  updated_at integer
 );
 
 create table "user_integrations" (
@@ -29,8 +30,8 @@ create table "user_integrations" (
   user integer,
   application integer,
   private_key blob,
-  created_at numeric,
-  updated_at numeric,
+  created_at integer,
+  updated_at integer,
   foreign key(user) references users(id),
   foreign key(application) references applications(id)
 );
@@ -40,8 +41,8 @@ create table "devices" (
   user_integration integer,
   name text,
   agent text,
-  last_seen numeric,
+  last_seen integer,
   foreign key(user_integration) references user_integrations(id)
 );
 
-insert into "meta" (key, value) values ('migration_revision', '1');
+insert into "meta" (key, value) values ('migration_revision', 1);

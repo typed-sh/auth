@@ -4,8 +4,6 @@ import {getAvailableMigrations, getRequiredMigrations, migrateSequentially} from
 type Server = Awaited<ReturnType<typeof createServer>>;
 
 const initMigrations = async (server: Server) => {
-	console.log('init(migrations): running');
-
 	const {db} = server;
 
 	let currentRevision = 0;
@@ -14,9 +12,9 @@ const initMigrations = async (server: Server) => {
 		currentRevision = parseInt(db.models.meta.getMigrationRevision()!, 10);
 	} catch (error) {
 		if (error instanceof Error && error.message.includes('no such table')) {
-			console.log('init(migrations): we are now on a fresh database');
+			server.log.info({type: 'init', scope: 'migrations'}, 'we are now on a fresh database');
 		} else {
-			console.error('init(migrations): exiting as the state is not evaluatable', error);
+			server.log.error({type: 'init', scope: 'migrations', error}, 'exiting as the state is not evaluatable');
 
 			// Hard exit
 			process.exit(1);
@@ -27,9 +25,13 @@ const initMigrations = async (server: Server) => {
 		currentRevision = 0;
 	}
 
-	await migrateSequentially(db.driver, await getRequiredMigrations(currentRevision, await getAvailableMigrations()));
+	const migrations = await getRequiredMigrations(currentRevision, await getAvailableMigrations());
 
-	console.log('init(migrations): done');
+	server.log.info({type: 'init', scope: 'migrations', currentRevision, finalRevision: migrations.slice(-1)[0].revision}, 'running migrations');
+
+	await migrateSequentially(db.driver, migrations);
+
+	server.log.info({type: 'init', scope: 'migrations'}, 'done migrations');
 };
 
 export const init = async (server: Server) => {
