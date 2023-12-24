@@ -1,6 +1,7 @@
 import {TypeBoxValidatorCompiler} from '@fastify/type-provider-typebox';
 import fastify from 'fastify';
 import {init} from './modules/init';
+import {cookiePlugin} from './plugins/cookie';
 import {databasePlugin} from './plugins/database';
 import {router} from './routes';
 
@@ -18,6 +19,7 @@ export const createServer = async () => {
 	})
 		.setValidatorCompiler(TypeBoxValidatorCompiler);
 
+	await server.register(cookiePlugin);
 	await server.register(databasePlugin);
 
 	await init(server);

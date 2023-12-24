@@ -1,6 +1,8 @@
 import {type onRequestAsyncHookHandler, type FastifyPluginAsync, FastifyReply} from 'fastify';
 import fastifyPlugin from 'fastify-plugin';
 
+const reference = 'cookies';
+
 export enum CookieNames {
 	Auth = 'auth',
 }
@@ -63,6 +65,14 @@ export const getCookieString = async (name: CookieNames, value: string, extensio
 
 const plugin: FastifyPluginAsync = async server => {
 	server.addHook('onRequest', handleRequest);
+
+	if (server.hasRequestDecorator(reference)) {
+		server.log.warn({type: 'plugin', scope: 'cookie'}, 'decorator already declared');
+
+		return;
+	}
+
+	server.decorateRequest(reference, null);
 };
 
 export const cookiePlugin = fastifyPlugin(plugin);
