@@ -46,14 +46,5 @@ create table "user_integrations" (
   foreign key(application) references applications(id)
 );
 
-create table "devices" (
-  id integer primary key,
-  user_integration integer not null,
-  name text,
-  agent text,
-  last_seen integer not null,
-  foreign key(user_integration) references user_integrations(id)
-);
-
 /* update migration meta */
 insert into "meta" (key, value) values ('migration_revision', 1);
