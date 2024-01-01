@@ -10,6 +10,7 @@ export type ApplicationsTable = {
 	privacy_policy: string;
 	redirect_uri: string;
 	is_approved: boolean;
+	is_confidential: boolean;
 	is_trusted: boolean;
 	created_at: number;
 	updated_at: number;

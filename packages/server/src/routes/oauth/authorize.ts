@@ -58,10 +58,10 @@ export const oauthAuthorizeRouter: FastifyPluginAsyncTypebox = async server => {
 				}));
 			}
 
-			if (query.scope.includes(Scope.UserWrite) && !application.is_trusted) {
+			if (!application.is_confidential && query.scope.includes(Scope.UserWrite)) {
 				return reply.redirect(307, application.redirect_uri + '?' + QueryString.stringify({
 					error: 'invalid_scope',
-					error_description: 'This application has not been approved to request user.write scope.',
+					error_description: 'This application type cannot request user.write scope.',
 				}));
 			}
 

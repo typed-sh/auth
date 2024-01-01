@@ -26,6 +26,7 @@ create table "applications" (
   privacy_policy text not null,
   redirect_uri text not null,
   is_approved bool not null,
+  is_confidential bool not null,
   is_trusted bool not null,
   created_at integer not null,
   updated_at integer not null,
