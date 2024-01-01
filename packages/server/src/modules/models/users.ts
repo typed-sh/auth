@@ -11,8 +11,6 @@ export type UsersTable = {
 	updated_at: number;
 };
 
-export const isPassword = (value: string) => value.length >= 16 && value.length <= 256 && /[^a-zA-Z0-9]/.test(value);
-
 export const prepareUsersModel = (db: Database) => {
 	const getUserByEmail = () => db.prepare<[UsersTable['email']], UsersTable>('select * from "users" where email = ?');
 	const getUserById = () => db.prepare<[UsersTable['id']], UsersTable>('select * from "users" where id = ?');

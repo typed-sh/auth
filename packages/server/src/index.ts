@@ -1,11 +1,19 @@
+import './modules/formats';
+
 import {TypeBoxValidatorCompiler} from '@fastify/type-provider-typebox';
 import fastify from 'fastify';
+import {type Config} from './modules/config';
 import {init} from './modules/init';
+import {configPlugin} from './plugins/config';
 import {cookiePlugin} from './plugins/cookie';
 import {databasePlugin} from './plugins/database';
 import {router} from './routes';
 
-export const createServer = async () => {
+export const createServer = async ({
+	config,
+}: {
+	config: Config;
+}) => {
 	const server = fastify({
 		logger: {
 			transport: {
@@ -19,8 +27,10 @@ export const createServer = async () => {
 	})
 		.setValidatorCompiler(TypeBoxValidatorCompiler);
 
-	await server.register(cookiePlugin);
+	await server.register(configPlugin, config);
 	await server.register(databasePlugin);
+
+	await server.register(cookiePlugin);
 
 	await init(server);
 

@@ -1,4 +1,4 @@
-import {type onRequestAsyncHookHandler, type FastifyPluginAsync, FastifyReply} from 'fastify';
+import {type FastifyPluginAsync, type onRequestAsyncHookHandler} from 'fastify';
 import fastifyPlugin from 'fastify-plugin';
 
 const reference = 'cookies';
@@ -63,11 +63,13 @@ type CookieExtensions = `Domain=${string}`
 
 export const getCookieString = async (name: CookieNames, value: string, extensions: CookieExtensions[]) => `${name}=${encodeURIComponent(value)}; ${extensions.join('; ')}`;
 
+export const atZeroDateUtcString = new Date(0).toUTCString();
+
 const plugin: FastifyPluginAsync = async server => {
 	server.addHook('onRequest', handleRequest);
 
 	if (server.hasRequestDecorator(reference)) {
-		server.log.warn({type: 'plugin', scope: 'cookie'}, 'decorator already declared');
+		server.log.warn({scope: 'plugin:cookie'}, 'decorator already declared');
 
 		return;
 	}

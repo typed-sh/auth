@@ -36,12 +36,7 @@ export const getRequiredMigrations = async (currentRevision: number, migrations:
 };
 
 export const migrate = async (db: Database, migration: Migration) => {
-	let sql = await readFile(migration.path, 'utf8');
-
-	sql = sql.replace(/{__AUTH_INIT_PASSWORD__}/g, process.env.__AUTH_INIT_PASSWORD__ ?? 'thisissamplepassword!');
-	sql = sql.replace(/{__AUTH_WEBSITE__}/g, process.env.__AUTH_WEBSITE__ ?? 'https://typed.sh');
-
-	db.exec(sql);
+	db.exec(await readFile(migration.path, 'utf8'));
 };
 
 export const migrateSequentially = async (db: Database, migrations: Migration[]) => {

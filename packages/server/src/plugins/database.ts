@@ -15,7 +15,7 @@ const reference = 'db';
 
 const plugin: FastifyPluginAsync = async server => {
 	if (server.hasDecorator(reference)) {
-		server.log.warn({type: 'plugin', scope: 'database'}, 'decorator already declared');
+		server.log.warn({scope: 'plugin:database'}, 'decorator already declared');
 
 		return;
 	}
@@ -23,7 +23,7 @@ const plugin: FastifyPluginAsync = async server => {
 	const filepath = path.join(process.cwd(), 'auth.db');
 
 	if (process.env.__AUTH_EMPTY_DB_ON_BOOT) {
-		server.log.warn({type: 'plugin', scope: 'database'}, 'emptying database file on boot');
+		server.log.warn({scope: 'plugin:database'}, 'emptying database file on boot');
 
 		await writeFile(filepath, '', 'utf8');
 	}
@@ -44,7 +44,7 @@ const plugin: FastifyPluginAsync = async server => {
 	server.addHook('onClose', () => {
 		driver.close();
 
-		server.log.info({type: 'plugin', scope: 'database'}, 'closed database');
+		server.log.info({scope: 'plugin:database'}, 'closed database');
 	});
 };
 

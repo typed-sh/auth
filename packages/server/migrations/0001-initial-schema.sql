@@ -7,9 +7,11 @@ create table "meta" (
 create table "users" (
   id integer primary key,
   email text not null,
-  username text,
+  username text not null,
   password text not null,
   mfa blob,
+  is_email_verified bool not null,
+  is_trusted bool not null,
   created_at integer not null,
   updated_at integer not null,
   unique(email)
@@ -19,9 +21,12 @@ create table "applications" (
   id integer primary key,
   user integer not null,
   name text not null,
-  description text,
-  website text,
-  privacy_policy text,
+  description text not null,
+  website text not null,
+  privacy_policy text not null,
+  redirect_uri text not null,
+  is_approved bool not null,
+  is_trusted bool not null,
   created_at integer not null,
   updated_at integer not null,
   foreign key(user) references users(id)
@@ -32,6 +37,8 @@ create table "user_integrations" (
   user integer not null,
   application integer not null,
   private_key blob not null,
+  is_user_readable boolean not null,
+  is_user_writable boolean not null,
   created_at integer not null,
   updated_at integer not null,
   foreign key(user) references users(id),
@@ -46,12 +53,6 @@ create table "devices" (
   last_seen integer not null,
   foreign key(user_integration) references user_integrations(id)
 );
-
-/* setup initial user */
-insert into "users" (email, username, password, mfa, created_at, updated_at)
-values ('internals@typed.sh', 'Typed.sh', '{__AUTH_INIT_PASSWORD__}', null, 0, 0);
-insert into "applications" (user, name, description, website, privacy_policy, created_at, updated_at)
-values (1, 'Typed.sh', '', '{__AUTH_WEBSITE__}', '', 0, 0);
 
 /* update migration meta */
 insert into "meta" (key, value) values ('migration_revision', 1);

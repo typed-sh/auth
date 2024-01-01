@@ -1,7 +1,12 @@
+import {V4} from 'paseto';
 import {createServer} from '..';
 
 const main = async () => {
-	const server = await createServer();
+	const server = await createServer({
+		config: {
+			platformKey: await V4.generateKey('public'),
+		},
+	});
 
 	await server.listen({
 		host: '127.0.0.1',

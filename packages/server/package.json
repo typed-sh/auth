@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "NODE_OPTIONS='--import tsx' node ./src/entrypoints/dev.ts",
+    "dev": "NODE_OPTIONS='--import tsx' node ./src/entrypoints/dev.ts",
     "test": "__AUTH_EMPTY_DB_ON_BOOT='1' NODE_OPTIONS='--import tsx' ava ./test"
   },
   "ava": {
@@ -20,6 +20,7 @@
   "devDependencies": {
     "@types/better-sqlite3": "^7.6.8",
     "@types/node": "^20.10.5",
+    "@types/qs": "^6.9.11",
     "@typescript-eslint/eslint-plugin": ">=6.0.0",
     "@typescript-eslint/parser": ">=6.0.0",
     "ava": "^6.0.1",
@@ -38,6 +39,7 @@
     "fastify-plugin": "^4.5.1",
     "paseto": "^3.1.4",
     "pino": "^8.17.1",
-    "pino-pretty": "^10.3.0"
+    "pino-pretty": "^10.3.0",
+    "qs": "^6.11.2"
   }
 }

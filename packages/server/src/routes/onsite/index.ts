@@ -1,6 +1,6 @@
-import {type FastifyPluginAsyncTypebox} from '@fastify/type-provider-typebox';
-import {onsiteUserRouter} from './user';
+import {type FastifyPluginAsync} from 'fastify';
+import {onsiteSessionRouter} from './session';
 
-export const onsiteRouter: FastifyPluginAsyncTypebox = async server => {
-	await server.register(onsiteUserRouter, {prefix: '/user'});
+export const onsiteRouter: FastifyPluginAsync = async server => {
+	await server.register(onsiteSessionRouter, {prefix: '/session'});
 };
