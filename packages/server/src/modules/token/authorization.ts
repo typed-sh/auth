@@ -1,6 +1,7 @@
 import {type KeyObject} from 'crypto';
 import {V4 as paseto} from 'paseto';
 import {type UserIntegrationsTable} from '../models/userIntegrations';
+import {type Scope} from './scope';
 
 const defaultSigningOptions = {
 	issuer: 'typed.sh',
@@ -9,6 +10,7 @@ const defaultSigningOptions = {
 
 export type AuthorizationTokenPayload = {
 	integration: UserIntegrationsTable['id'];
+	scopes: Scope[];
 	state: string;
 };
 

@@ -2,10 +2,9 @@
 /* eslint-disable new-cap */
 import {Type, type FastifyPluginAsyncTypebox} from '@fastify/type-provider-typebox';
 import {HttpErrorBadRequest} from '../../modules/errors';
-import {validateAuthorizationToken} from '../../modules/token/authorization';
 import {issueAccessToken} from '../../modules/token/access';
+import {validateAuthorizationToken} from '../../modules/token/authorization';
 import {issueRefreshToken} from '../../modules/token/refresh';
-import {Scope} from '../../modules/token/scope';
 
 export const oauthTokenRouter: FastifyPluginAsyncTypebox = async server => {
 	server.route({
@@ -46,21 +45,11 @@ export const oauthTokenRouter: FastifyPluginAsyncTypebox = async server => {
 
 			server.db.models.userIntegrations.setUserIntegrationState().run('', integration.id);
 
-			const scopes: Scope[] = [];
-
-			if (integration.is_user_readable) {
-				scopes.push(Scope.UserRead);
-			}
-
-			if (integration.is_user_writable) {
-				scopes.push(Scope.UserWrite);
-			}
-
 			const accessToken = await issueAccessToken(integration.private_key, {
 				integration: integration.id,
 				user: integration.user,
 				application: integration.application,
-				scopes,
+				scopes: payload.scopes,
 			});
 			const refreshToken = await issueRefreshToken(integration.private_key, {
 				integration: integration.id,
@@ -71,7 +60,7 @@ export const oauthTokenRouter: FastifyPluginAsyncTypebox = async server => {
 				token_type: 'bearer',
 				expires_in: 1800,
 				refresh_token: refreshToken,
-				scope: scopes,
+				scope: payload.scopes,
 			};
 		},
 	});

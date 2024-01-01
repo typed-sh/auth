@@ -4,6 +4,7 @@ import {Type, type FastifyPluginAsyncTypebox} from '@fastify/type-provider-typeb
 import QueryString from 'qs';
 import {HttpErrorBadRequest} from '../../modules/errors';
 import {Formats} from '../../modules/formats';
+import {issueAccessToken} from '../../modules/token/access';
 import {issueAuthorizationToken} from '../../modules/token/authorization';
 import {Scope, scopeSchema} from '../../modules/token/scope';
 import {authenticateOnsitePlugin} from '../../plugins/middlewares/authenticateOnsite';
@@ -16,7 +17,12 @@ export const oauthAuthorizeRouter: FastifyPluginAsyncTypebox = async server => {
 		method: 'get',
 		schema: {
 			querystring: Type.Object({
-				response_type: Type.Literal('code'),
+				response_type: Type.Union([
+					Type.Literal('code'),
+					Type.Literal('token'),
+					Type.Literal('password'),
+					Type.Literal('client_credentials'),
+				]),
 				client_id: Type.String({
 					format: Formats.Numeric,
 				}),
@@ -35,7 +41,7 @@ export const oauthAuthorizeRouter: FastifyPluginAsyncTypebox = async server => {
 			const application = server.db.models.applications.getApplication().get(clientId);
 
 			if (!application) {
-				throw new HttpErrorBadRequest('application not found');
+				throw new HttpErrorBadRequest('invalid_request');
 			}
 
 			if (!application.is_approved) {
@@ -54,7 +60,7 @@ export const oauthAuthorizeRouter: FastifyPluginAsyncTypebox = async server => {
 
 			if (query.scope.includes(Scope.UserWrite) && !application.is_trusted) {
 				return reply.redirect(307, application.redirect_uri + '?' + QueryString.stringify({
-					error: 'invalid_request',
+					error: 'invalid_scope',
 					error_description: 'This application has not been approved to request user.write scope.',
 				}));
 			}
@@ -65,19 +71,70 @@ export const oauthAuthorizeRouter: FastifyPluginAsyncTypebox = async server => {
 				return reply.redirect(307, '/i/onsite/integration?' + QueryString.stringify({callback: request.originalUrl}));
 			}
 
-			const state = Math.random().toString(36);
-			const token = await issueAuthorizationToken(server.config.platformKey, {
+			if (
+				(!integration.is_user_readable && query.scope.includes(Scope.UserRead))
+				|| (!integration.is_user_writable && query.scope.includes(Scope.UserWrite))
+			) {
+				return reply.redirect(307, application.redirect_uri + '?' + QueryString.stringify({
+					error: 'invalid_scope',
+					error_description: 'This request includes unauthorized scopes for this application.',
+				}));
+			}
+
+			if (
+				query.response_type === 'password'
+				|| query.response_type === 'client_credentials'
+			) {
+				throw new HttpErrorBadRequest('unsupported_response_type');
+			}
+
+			// Authorization Code Grant
+			// https://datatracker.ietf.org/doc/html/rfc6749#section-4.1
+			if (query.response_type === 'code') {
+				const state = Math.random().toString(36);
+				const token = await issueAuthorizationToken(server.config.platformKey, {
+					integration: integration.id,
+					scopes: query.scope,
+					state,
+				});
+
+				server.db.models.userIntegrations.setUserIntegrationState().run(state, integration.id);
+
+				return reply.redirect(307, application.redirect_uri + '?' + QueryString.stringify(query.state ? {
+					code: token,
+					state: query.state,
+				} : {
+					code: token,
+				}));
+			}
+
+			// Implicit Grant
+			// https://datatracker.ietf.org/doc/html/rfc6749#section-4.2
+			if (query.scope.includes(Scope.UserWrite)) {
+				return reply.redirect(307, application.redirect_uri + '?' + QueryString.stringify({
+					error: 'invalid_scope',
+					error_description: 'This request includes unauthorized scopes for this response type.',
+				}));
+			}
+
+			const accessToken = await issueAccessToken(integration.private_key, {
 				integration: integration.id,
-				state,
+				user: integration.user,
+				application: integration.application,
+				scopes: query.scope,
 			});
 
-			server.db.models.userIntegrations.setUserIntegrationState().run(state, integration.id);
-
 			return reply.redirect(307, application.redirect_uri + '?' + QueryString.stringify(query.state ? {
-				code: token,
+				access_token: accessToken,
+				token_type: 'bearer',
+				expires_in: 1800,
+				scope: query.scope,
 				state: query.state,
 			} : {
-				code: token,
+				access_token: accessToken,
+				token_type: 'bearer',
+				expires_in: 1800,
+				scope: query.scope,
 			}));
 		},
 	});
