@@ -1,5 +1,6 @@
 import {V4 as paseto} from 'paseto';
 import {type UserIntegrationsTable} from '../models/userIntegrations';
+import {type Scope} from './scope';
 
 const defaultSigningOptions = {
 	issuer: 'typed.sh',
@@ -8,6 +9,7 @@ const defaultSigningOptions = {
 
 export type RefreshTokenPayload = {
 	integration: UserIntegrationsTable['id'];
+	scopes: Scope[];
 };
 
 export const issueRefreshToken = async (key: Buffer, payload: RefreshTokenPayload) => paseto.sign(

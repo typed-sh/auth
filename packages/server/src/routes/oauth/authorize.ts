@@ -119,8 +119,6 @@ export const oauthAuthorizeRouter: FastifyPluginAsyncTypebox = async server => {
 
 			const accessToken = await issueAccessToken(integration.private_key, {
 				integration: integration.id,
-				user: integration.user,
-				application: integration.application,
 				scopes: query.scope,
 			});
 

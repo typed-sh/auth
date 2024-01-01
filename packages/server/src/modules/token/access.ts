@@ -1,7 +1,5 @@
 import {decode, V4 as paseto} from 'paseto';
-import {type ApplicationsTable} from '../models/applications';
 import {type UserIntegrationsTable} from '../models/userIntegrations';
-import {type UsersTable} from '../models/users';
 import {type Scope} from './scope';
 
 const defaultSigningOptions = {
@@ -11,8 +9,6 @@ const defaultSigningOptions = {
 
 export type AccessTokenPayload = {
 	integration: UserIntegrationsTable['id'];
-	user: UsersTable['id'];
-	application: ApplicationsTable['id'];
 	scopes: Scope[];
 };
 
